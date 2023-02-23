@@ -26,7 +26,7 @@ public class StoreDb : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseNpgsql(
-                "Host=localhost;Port=5432;Database=store;User Id=postgres;Password=1234"
+                "Host=containers-us-west-126.railway.app;Port=6204;Database=store;User Id=postgres;Password=j7lZ0VNnZgu29EmvHTE2"
                 );
         }
     }

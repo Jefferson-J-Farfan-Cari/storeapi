@@ -42,7 +42,6 @@
       <Content Include="obj\StoreAPI.csproj.nuget.dgspec.json" />
       <Content Include="obj\StoreAPI.csproj.nuget.g.props" />
       <Content Include="obj\StoreAPI.csproj.nuget.g.targets" />
-      <Content Remove="obj\**" />
     </ItemGroup>
 
     <ItemGroup>
@@ -50,19 +49,10 @@
       <Compile Include="obj\Debug\net6.0\StoreAPI.AssemblyInfo.cs" />
       <Compile Include="obj\Debug\net6.0\StoreAPI.GlobalUsings.g.cs" />
       <Compile Include="obj\Debug\net6.0\StoreAPI.MvcApplicationPartsAssemblyInfo.cs" />
-      <Compile Remove="obj\**" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="obj\Debug\net6.0\staticwebassets" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Remove="obj\**" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="obj\**" />
     </ItemGroup>
 
 </Project>
