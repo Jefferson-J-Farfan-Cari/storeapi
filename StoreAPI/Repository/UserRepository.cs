@@ -61,7 +61,7 @@ public class UserRepository: BaseRepository, IUserRepository
                 {
                     IdUser = user.IdUser,
                     DocumentType = user.DocumentType,
-                    Password = SecurityStoreApi.Encrypt(user.Password),
+                    Password = user.Password,
                     Name = user.Name,
                     FatherLN = user.FatherLN,
                     MotherLN = user.MotherLN,
@@ -101,7 +101,7 @@ public class UserRepository: BaseRepository, IUserRepository
             var user = Context.User.FirstOrDefault(
                            x => 
                                x.Email == userDto.Email &&
-                               x.Password == SecurityStoreApi.Encrypt(userDto.Password)
+                               x.Password == userDto.Password
                            ) ?? 
                        throw new Exception("Invalid User");
             var credentials = new UserCredentials
