@@ -20,7 +20,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("")]
-    [CheckToken]
+    // [CheckToken]
     public ActionResult<CollectionResponse<UserDto>> ListUsers(int page = 0, int reg = 10)
     {
         try
