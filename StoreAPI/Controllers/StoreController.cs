@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StoreAPI.Entities.Dto;
 using StoreAPI.Entities.Interface;
+using StoreAPI.Entities.Security;
 
 namespace StoreAPI.Controllers;
 
@@ -20,6 +21,7 @@ public class StoreController : ControllerBase
     }
 
     [HttpGet("")]
+    [CheckToken]
     public ActionResult<CollectionResponse<StoreDto>> ListStores(int page = 0, int reg = 10)
     {
         try
@@ -33,6 +35,7 @@ public class StoreController : ControllerBase
     }
 
     [HttpGet("by_id")]
+    [CheckToken]
     public ActionResult<StoreDto> FindById(long idStore)
     {
         try
@@ -46,7 +49,8 @@ public class StoreController : ControllerBase
     }
     
     [HttpGet("filters")]
-    public ActionResult<CollectionResponse<StoreDto>> ListStores(int idUser = 0, string storeName = "", string address = "",
+    [CheckToken]
+    public ActionResult<CollectionResponse<StoreDto>> ListStores(string storeName = "", string address = "",
         double radio = 0.0, int order = 0, double latitude = 0.0, double longitude = 0.0, int page = 0, int reg = 10)
     {
         try
@@ -60,7 +64,7 @@ public class StoreController : ControllerBase
     }
     
     [HttpPost("")]
-    //  [VerificaToken]
+    [CheckToken]
     public ActionResult<StoreDto> Save(StoreDto store)
     {
         try
@@ -73,27 +77,13 @@ public class StoreController : ControllerBase
         }
     }
 
-    [HttpPost("save_list")]
-    //  [VerificaToken]
-    public ActionResult<List<StoreDto>> SaveList(List<StoreDto> store)
-    {
-        try
-        {
-            return _repository.SaveList(store);
-        }
-        catch (Exception ex)
-        {
-            return new BadRequestObjectResult(ex);
-        }
-    }
-
     [HttpPut("")]
-    //   [VerificaToken]
-    public ActionResult<List<StoreDto>> Update(List<StoreDto> store)
+    [CheckToken]
+    public ActionResult<StoreDto> Update(StoreDto store)
     {
         try
         {
-            return _repository.SaveList(store);
+            return _repository.Save(store);
         }
         catch (Exception ex)
         {

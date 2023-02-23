@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace StoreAPI.Entities.Security;
 
@@ -19,7 +20,7 @@ public class SecurityStoreApi
         "Wb9qgAf7HzfUJBs5hFVgcMdMMawxgbcBMW0maX2GnHDxVFathhI6b+YF5btY/tjxq7TVj6vjp60eWrTM17sxEIPaHRFefEptg3Aa58DlSf" +
         "kdJGalnjdJeh6qjp1YfofQ1x0quw==";
     
-    //public static SymmetricSecurityKey GetSymmetricSecurityKey() => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+    public static SymmetricSecurityKey GetSymmetricSecurityKey() => new (Encoding.UTF8.GetBytes(Key));
     
     public static string Encrypt(string cadena)
     {

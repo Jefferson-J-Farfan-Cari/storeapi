@@ -49,6 +49,7 @@ public class StoreRepository : BaseRepository, IStoreRepository
                             Code = y.Code,
                             Stock = y.Stock,
                             Brand = y.Brand,
+                            Price = y.Price,
                             DueDate = y.DueDate
                         }).ToList()
                     }
@@ -79,7 +80,7 @@ public class StoreRepository : BaseRepository, IStoreRepository
                     LogState = store.LogState
                 };
                 Context.Add(newStore);
-                _productRepository.SaveList(store.Products);
+                //_productRepository.SaveList(store.Products);
             }
             else
             {
@@ -96,59 +97,6 @@ public class StoreRepository : BaseRepository, IStoreRepository
             }
             Context.SaveChanges();
             return store;
-        }
-        catch (Exception e)
-        {
-            throw e;
-        }
-    }
-
-    public List<StoreDto> SaveList(List<StoreDto> listStore)
-    {
-        try
-        {
-            var tmpStore = new List<Store>();
-
-            foreach (var store in listStore)
-            {
-                if (Exists(store.IdStore))
-                {
-                    var storeUpdate = Context.Store.First(x => x.IdStore == store.IdStore);
-                    storeUpdate.Name = store.Name;
-                    storeUpdate.Address = store.Address;
-                    storeUpdate.Latitude = store.Latitude;
-                    storeUpdate.Longitude = store.Longitude;
-                    storeUpdate.LogDateModified = DateTime.Now;
-                    storeUpdate.LogState = store.LogState;
-                    continue;
-                }
-
-                var newStore = new Store
-                {
-                    Name = store.Name,
-                    Address = store.Address,
-                    Latitude = store.Latitude,
-                    Longitude = store.Longitude,
-                    LogDateCrate = store.LogDateCrate,
-                    LogDateModified = store.LogDateModified,
-                    LogState = store.LogState,
-                };
-
-                tmpStore.Add(newStore);
-                Context.Add(newStore);
-
-                _productRepository.SaveList(store.Products);
-
-            }
-
-            Context.SaveChanges();
-
-            for (var i = 0; i < tmpStore.Count; i++)
-            {
-                listStore[i].IdStore = tmpStore[i].IdStore;
-            }
-
-            return listStore;
         }
         catch (Exception e)
         {

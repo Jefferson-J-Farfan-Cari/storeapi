@@ -65,6 +65,9 @@ public class ProductRepository: BaseRepository, IProductRepository
                 var newProduct = new Product
                 {
                     IdProduct = product.IdProduct,
+                    IdCategory = product.IdCategory,
+                    IdStore = product.IdStore,
+                    Code = product.Code,
                     Name = product.Name,
                     Description = product.Description,
                     Stock = product.Stock,
@@ -83,6 +86,7 @@ public class ProductRepository: BaseRepository, IProductRepository
                     x.IdProduct == product.IdProduct &&
                     x.LogState == (int)Constants.StatusRecord.ACTIVE) ?? throw new Exception("");
                 actProduct.IdCategory = product.IdCategory;
+                actProduct.IdStore = product.IdStore;
                 actProduct.Name = product.Name;
                 actProduct.Description = product.Description;
                 actProduct.Stock = product.Stock;
@@ -109,6 +113,7 @@ public class ProductRepository: BaseRepository, IProductRepository
             
             foreach (var product in listProducts)
             {
+                Console.WriteLine("=====> Here 1");
                 if (Exists(product.IdProduct))
                 {
                     var productUpdate = Context.Product.First(x => x.IdProduct == product.IdProduct);
@@ -121,36 +126,38 @@ public class ProductRepository: BaseRepository, IProductRepository
                     productUpdate.Description = product.Description;
                     productUpdate.LogDateModified = DateTime.Now;
                     productUpdate.LogState = product.LogState;
-
+                    Console.WriteLine("=====> Here 2");
+                    continue;
                 }
-                else
+                var newProduct = new Product
                 {
-                    var newProduct = new Product
-                    {
-                        IdCategory = product.IdCategory,
-                        IdStore = product.IdStore,
-                        Code = product.Code,
-                        Name = product.Name,
-                        Stock = product.Stock,
-                        Price = product.Price,
-                        Brand = product.Brand,
-                        Description = product.Description,
-                        DueDate = product.DueDate,
-                        LogDateCrate = DateTime.Now,
-                        LogDateModified = DateTime.Now,
-                        LogState = product.LogState,
-                    };
-                    tmpProducts.Add(newProduct);
-                    Context.Add(newProduct);
-                }
-
+                    IdProduct = product.IdProduct,
+                    IdCategory = product.IdCategory,
+                    IdStore = product.IdStore,
+                    Code = product.Code,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Stock = product.Stock,
+                    Brand = product.Brand,
+                    Price = product.Price,
+                    DueDate = product.DueDate,
+                    LogDateCrate = DateTime.Now,
+                    LogDateModified = DateTime.Now,
+                    LogState = product.LogState,
+                };
+                Console.WriteLine("=====> Here 3");
+                tmpProducts.Add(newProduct);
+                Context.Add(newProduct);
+                Console.WriteLine("=====> Here 4");
             }
             Context.SaveChanges();
+            Console.WriteLine("=====> Here 5");
             for (var i = 0; i < tmpProducts.Count; i++)
             {
                 listProducts[i].IdProduct = tmpProducts[i].IdProduct;
             }
 
+            Console.WriteLine("=====> Here 6");
             return listProducts;
         }
         catch (Exception e)
@@ -166,7 +173,7 @@ public class ProductRepository: BaseRepository, IProductRepository
         try
         {
             var query = (from p in Context.Product
-                    where (name == "" || p.Description.Contains(name)) &&
+                    where (name == "" || p.Name.Contains(name)) &&
                           (category == 0 || p.IdCategory == category) &&
                           (idStore == 0 || p.IdStore == idStore) &&
                           (min == 0.0m || p.Price > min) &&
@@ -216,8 +223,8 @@ public class ProductRepository: BaseRepository, IProductRepository
             
             query2 = order switch
             {
-                1 => query2.OrderByDescending(x => x.Distance),
-                2 => query2.OrderByDescending(x => x.Products[0].Price),
+                1 => query2.OrderBy(x => x.Distance),
+                2 => query2.OrderBy(x => x.Products[0].Price),
                 _ => query2
             };
 

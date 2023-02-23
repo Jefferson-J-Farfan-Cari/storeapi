@@ -1,19 +1,21 @@
-﻿using System.Runtime.Serialization.Json;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.IdentityModel.Tokens;
 
 namespace StoreAPI.Entities.Security;
 
 public class CheckToken : ActionFilterAttribute
 {
-    /*public override void OnActionExecuting(ActionExecutingContext actionContext)
+    public override void OnActionExecuting(ActionExecutingContext actionContext)
     {
         try
         {
             if (!actionContext.HttpContext.Request.Headers.ContainsKey("Authorization"))
             {
-                actionContext.Result = new StatusCodeResult(403);
+                actionContext.Result = new StatusCodeResult(401);
             }
             else
             {
@@ -32,7 +34,7 @@ public class CheckToken : ActionFilterAttribute
                     {
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        IssuerSigningKey = SeguridadFarmacia.GetSymmetricSecurityKey()
+                        IssuerSigningKey = SecurityStoreApi.GetSymmetricSecurityKey()
                     };
 
                     var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
@@ -40,7 +42,7 @@ public class CheckToken : ActionFilterAttribute
 
                     var tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out  validatedToken);
                     var values = jwtSecurityTokenHandler.ReadJwtToken(token).Payload.Values;
-                    var usuarioCredentials = Deserialize<UsuarioCredentials>(values.ElementAt(3).ToString());
+                    var usuarioCredentials = Deserialize<UserCredentials>(values.ElementAt(3).ToString()!);
 
                     actionContext.HttpContext.Items.Add("userInfo", usuarioCredentials);
                 }
@@ -51,7 +53,7 @@ public class CheckToken : ActionFilterAttribute
             actionContext.Result = new UnauthorizedObjectResult(new
             {
                 IdError = 403,
-                Mensaje = "Token Expirado",
+                Mensaje = "Expired Token",
                 Traza = ex.StackTrace
             });
         }
@@ -60,7 +62,7 @@ public class CheckToken : ActionFilterAttribute
             actionContext.Result = new UnauthorizedObjectResult(new
             {
                 IdError = 403,
-                Mensaje = "Token Invalido",
+                Mensaje = "Invalid Token",
                 Traza = ex.StackTrace
             });
         }
@@ -73,5 +75,5 @@ public class CheckToken : ActionFilterAttribute
         var obj = (T) new DataContractJsonSerializer(instance.GetType()).ReadObject(memoryStream);
         memoryStream.Close();
         return obj;
-    }*/
+    }
 }

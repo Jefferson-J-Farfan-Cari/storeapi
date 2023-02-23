@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using StoreAPI.Entities.Dto;
 using StoreAPI.Entities.Interface;
 using StoreAPI.Entities.Models;
@@ -30,7 +32,6 @@ public class UserRepository: BaseRepository, IUserRepository
                     {
                         IdUser = user.IdUser,
                         DocumentType = user.DocumentType,
-                        Password = user.Password,
                         Name = user.Name ?? string.Empty,
                         FatherLN = user.FatherLN ?? string.Empty,
                         MotherLN = user.MotherLN ?? string.Empty,
@@ -60,7 +61,7 @@ public class UserRepository: BaseRepository, IUserRepository
                 {
                     IdUser = user.IdUser,
                     DocumentType = user.DocumentType,
-                    Password = user.Password,
+                    Password = SecurityStoreApi.Encrypt(user.Password),
                     Name = user.Name,
                     FatherLN = user.FatherLN,
                     MotherLN = user.MotherLN,
@@ -76,7 +77,6 @@ public class UserRepository: BaseRepository, IUserRepository
             {
                 var myUser = Context.User.FirstOrDefault(x => x.IdUser == user.IdUser && x.LogState == (int) 
                     Constants.StatusRecord.ACTIVE) ?? throw new Exception("User not Found.");
-
                 myUser.Email = user.Email;
                 myUser.Document = user.Document;
                 myUser.Name = user.Name;
@@ -98,15 +98,18 @@ public class UserRepository: BaseRepository, IUserRepository
     {
         try
         {
-            var user = Context.User.FirstOrDefault(x => x.Password == userDto.Password) ?? 
+            var user = Context.User.FirstOrDefault(
+                           x => 
+                               x.Email == userDto.Email &&
+                               x.Password == SecurityStoreApi.Encrypt(userDto.Password)
+                           ) ?? 
                        throw new Exception("Invalid User");
-
             var credentials = new UserCredentials
             {
-                Document = user.Document,
                 IdUser = user.IdUser,
+                Email = user.Email,
             };
-            return null; //GenerateAccessTokens(credentials);
+            return GenerateAccessTokens(credentials);
         }
         catch (Exception e)
         {
@@ -115,13 +118,13 @@ public class UserRepository: BaseRepository, IUserRepository
     }
 
     #region Metodos Privados
-    /*private TokenCredentials GenerateAccessTokens(UserCredentials user)
+
+    protected virtual TokenCredentials GenerateAccessTokens(UserCredentials user)
     {
         try
         {
             var securityKey = SecurityStoreApi.GetSymmetricSecurityKey();
-            var credentials = new SecurityStoreApi(securityKey, SecurityAlgorithms.HmacSha256);
-                
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             const int tiempoNoAntesMin = 4; 
             const int tiempoExpiraSec = 24  * 60 * 60;
 
@@ -130,16 +133,13 @@ public class UserRepository: BaseRepository, IUserRepository
 
             var expiry = current.AddHours(24 );
             var notBefore = current.AddMinutes(tiempoNoAntesMin);
-
-            var payload = new JwtPayload("farmacia", null, new List<Claim>(), notBefore, expiry)
+            var payload = new JwtPayload("stores", null, new List<Claim>(), notBefore, expiry)
             {
                 {"scopes", user}
             };
-
             var handler = new JwtSecurityTokenHandler();
             var header = new JwtHeader(credentials);
             var secToken = new JwtSecurityToken(header, payload);
-
             return new TokenCredentials
             {
                 AccessToken = handler.WriteToken(secToken),
@@ -153,6 +153,6 @@ public class UserRepository: BaseRepository, IUserRepository
         {
             throw e;
         }
-    }*/
+    }
     #endregion
 }

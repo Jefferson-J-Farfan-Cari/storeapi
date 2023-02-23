@@ -1,9 +1,12 @@
-﻿namespace StoreAPI.Entities.Dto;
+﻿using System.Text.Json.Serialization;
+
+namespace StoreAPI.Entities.Dto;
 
 public class UserDto : GenericDto
 {
     public int IdUser { get; set; }
     public int DocumentType { get; set; }
+    [JsonIgnore (Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string Password { get; set; }
     public string Name { get; set; }
     public string FatherLN { get; set; }

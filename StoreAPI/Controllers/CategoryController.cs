@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StoreAPI.Entities.Dto;
 using StoreAPI.Entities.Interface;
+using StoreAPI.Entities.Security;
 
 namespace StoreAPI.Controllers;
 
@@ -18,6 +19,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpGet("")]
+    [CheckToken]
     public ActionResult<CollectionResponse<CategoryDto>> ListCategories(int page = 0, int reg = 10)
     {
         try
@@ -31,6 +33,7 @@ public class CategoryController : ControllerBase
     }
     
     [HttpGet("by_id")]
+    [CheckToken]
     public ActionResult<CategoryDto> FindById(long idCategory)
     {
         try
@@ -44,7 +47,7 @@ public class CategoryController : ControllerBase
     }
     
     [HttpPost("")]
-    //  [VerificaToken]
+    [CheckToken]
     public ActionResult<CategoryDto> Save(CategoryDto category)
     {
         try
@@ -58,7 +61,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost("save_list")]
-    //  [VerificaToken]
+    [CheckToken]
     public ActionResult<List<CategoryDto>> SaveList(List<CategoryDto> category)
     {
         try
@@ -72,7 +75,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut("")]
-    //   [VerificaToken]
+    [CheckToken]
     public ActionResult<List<CategoryDto>> Update(List<CategoryDto> category)
     {
         try
